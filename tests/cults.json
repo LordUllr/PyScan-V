@@ -1,0 +1,161 @@
+{
+  "scan_meta": {
+    "schema_version": "1.0.0",
+    "scanner_name": "PyScan",
+    "scanner_version": "0.1.0",
+    "started_at": "2025-09-23T20:45:21.926229Z",
+    "finished_at": "2025-09-23T20:45:28.527043Z",
+    "duration_ms": 6600,
+    "host_env": {
+      "os": "Windows-11-10.0.26100-SP0",
+      "python": "3.13.7",
+      "hostname": "DESKTOP-AIROLC6",
+      "ip": "192.168.1.100"
+    }
+  },
+  "target": {
+    "input": "www.cults3d.com",
+    "resolved_ip": "104.26.13.215",
+    "scope_note": "Somente dominio raiz",
+    "network": {
+      "ports_scanned": [
+        22,
+        80,
+        443,
+        3389
+      ],
+      "open_ports": [
+        80,
+        443
+      ]
+    }
+  },
+  "scan_params": {
+    "ports_spec": "22,443,80,3389",
+    "tcp_timeout_s": 1.0,
+    "workers": 100,
+    "http_timeout_s": 7.0,
+    "user_agent": "PyScan/0.1.0",
+    "dns_resolver": "system",
+    "follow_redirects": false
+  },
+  "results": {
+    "tls": {
+      "enabled": true,
+      "version": "TLSv1.3",
+      "certificate": {
+        "issuer": "Google Trust Services",
+        "subject": "cults3d.com",
+        "not_before": "2025-09-18T19:32:40Z",
+        "not_after": "2025-12-17T20:32:28Z",
+        "days_to_expire": 84,
+        "valid": true
+      }
+    },
+    "http": {
+      "http_to_https_redirect": null,
+      "headers": {
+        "x_content_type_options": "nosniff",
+        "referrer_policy": "strict-origin-when-cross-origin",
+        "permissions_policy": "interest-cohort=()"
+      },
+      "cookies": [
+        {
+          "name": "_session_id",
+          "secure": true,
+          "httponly": false,
+          "samesite": null
+        }
+      ],
+      "affected": [
+        "http://www.cults3d.com/"
+      ]
+    },
+    "fingerprints": [
+      {
+        "port": 80,
+        "banner": "HTTP/1.1 301 Moved Permanently\r\nDate: Tue, 23 Sep 2025 20:45:27 GMT\r\nConnection: close\r\nLocation: https://www.cults3d.com/\r\nReport-To: {\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=noEOGZvfXVaLfYb1v%2F4aqfFjYNiPY6%2BfvFfrM3eUVi0yjY7cajlt%2FXUMAbbgpKaePAWHxchJ5HcPva8c8iEL%2Bye4TilhHMc306R%2Fy4G8\"}]}\r\nNel: {\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}\r\nServer-Timing: cfEdge;dur=3,cfOrigin;dur=0\r\nServer: cloudflare\r\nCF-RAY: 983ce2c838d9f264-GRU\r\nalt-svc: h3=\":443\"; ma=86400",
+        "service": "http",
+        "product": null,
+        "version": null,
+        "raw": "485454502f312e3120333031204d6f766564205065726d616e656e746c790d0a446174653a205475652c2032332053657020323032352032303a34353a323720474d540d0a436f6e6e656374696f6e3a20636c6f73650d0a4c6f636174696f6e3a2068747470733a2f2f7777772e63756c747333642e636f6d2f0d0a5265706f72742d546f3a207b2267726f7570223a2263662d6e656c222c226d61785f616765223a3630343830302c22656e64706f696e7473223a5b7b2275726c223a2268747470733a2f2f61"
+      },
+      {
+        "port": 443,
+        "banner": null,
+        "service": null,
+        "product": null,
+        "version": null,
+        "raw": null
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "HSTS_MISSING",
+      "category": "HTTP",
+      "title": "HSTS ausente",
+      "severity": "high",
+      "score": 7.5,
+      "standards": {
+        "owasp": [
+          "Secure Headers"
+        ],
+        "cwe": []
+      },
+      "evidence": "Cabeçalho Strict-Transport-Security não encontrado",
+      "recommendation": "Adicionar HSTS: max-age=63072000; includeSubDomains; preload.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "affected": [],
+      "false_positive": false
+    },
+    {
+      "id": "CSP_MISSING",
+      "category": "HTTP",
+      "title": "CSP ausente",
+      "severity": "medium",
+      "score": 6.0,
+      "standards": {
+        "owasp": [
+          "A03-Injection (XSS) – mitigação por CSP"
+        ],
+        "cwe": [
+          "CWE-79"
+        ]
+      },
+      "evidence": "Cabeçalho Content-Security-Policy não encontrado",
+      "recommendation": "Definir CSP mínima (ex.: default-src 'self') e ampliar gradualmente.",
+      "references": [
+        "https://developer.mozilla.org/docs/Web/HTTP/CSP"
+      ],
+      "affected": [],
+      "false_positive": false
+    }
+  ],
+  "summary": {
+    "totals": {
+      "high": 1,
+      "medium": 1,
+      "low": 0
+    },
+    "by_category": {
+      "HTTP": 2
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "compliance": {
+    "https_enforced": false,
+    "hsts_present": false,
+    "csp_present": false,
+    "min_tls_version": "TLSv1.3",
+    "meets_baseline": false
+  },
+  "signing": {
+    "sha256": "631b831b0a2af0d00c3e84357a58fca9a2473512103224e7841f4b7cd0607c7e",
+    "signed_at": "2025-09-23T20:45:28.527043Z",
+    "signature": null
+  }
+}

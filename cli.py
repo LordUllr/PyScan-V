@@ -11,6 +11,7 @@ from scanner.httpsec import analyze_http
 from scanner.severity import assess_findings
 from scanner.report import to_json, to_html
 from scanner.utils import now_utc_iso_z, resolve_host, file_sha256, host_env
+from scanner.fingerprint import fingerprint_ports
 
 # Função para analisar a especificação de portas / Function to parse port specification
 def parse_ports(spec: str):
@@ -76,13 +77,24 @@ def main():
         http_result = {}
         errors.append({"where": "http.fetch", "message": str(e)})
 
+    # Gather fingerprints only for open ports (or all scanned ports if you prefer)
+    open_ports = [p["port"] for p in port_results if p.get("open")]
+
+    # if none open, fingerprint a subset like common web ports
+    if not open_ports:
+        # fallback to ports scanned for visibility
+        open_ports = ports
+
+    fingerprints = fingerprint_ports(args.target, open_ports, timeout=1.0, workers=min(50, args.workers))
+
     # --- estrutura intermediária compatível com severity.assess_findings
     data = {
         "target": args.target,
         "ports": port_results,
         "tls": tls_result or {},
         "http": http_result or {},
-    }
+        "fingerprints": fingerprints,
+        }
 
     # --- Findings normalizados / Normalized findings
     findings = assess_findings(data)
@@ -133,6 +145,7 @@ def main():
         "results": {
             "tls": tls_result,
             "http": http_result,
+            "fingerprints": fingerprints,
         },
         "findings": findings,
         "summary": {

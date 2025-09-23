@@ -1,3 +1,5 @@
+# _*_ coding: utf-8 _*_
+
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import ssl
 
