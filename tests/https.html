@@ -1,0 +1,189 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Security Scan – localhost</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root{
+      --bg:#0b0d12; --card:#111520; --muted:#9aa3b2; --text:#e7ecf3;
+      --hi:#ff4d4f; --md:#faad14; --lo:#52c41a; --line:#1c2230; --accent:#4aa8ff;
+    }
+    @media (prefers-color-scheme: light) {
+      :root{
+        --bg:#f7f9fc; --card:#ffffff; --muted:#5a6677; --text:#1a2230;
+        --hi:#d32029; --md:#b56b00; --lo:#2e8b57; --line:#e6eaf2; --accent:#1677ff;
+      }
+    }
+    *{box-sizing:border-box}
+    body{ margin:0; padding:24px; background:var(--bg); color:var(--text);
+      font:14px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji"}
+    .container{max-width:1100px; margin:0 auto}
+    .header{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap;
+      margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--line)}
+    .title{margin:0; font-size:22px; letter-spacing:.2px}
+    .meta{color:var(--muted); font-size:13px}
+    .cards{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; margin:16px 0 20px}
+    .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; box-shadow:0 1px 0 rgba(0,0,0,.04)}
+    .card h3{margin:0 0 6px; font-size:13px; color:var(--muted); font-weight:600; letter-spacing:.3px}
+    .value{font-size:24px; font-weight:700}
+    .badge{display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; font-weight:600; font-size:12px}
+    .hi{background:color-mix(in srgb, var(--hi) 18%, transparent); color:var(--hi); border:1px solid color-mix(in srgb, var(--hi) 40%, transparent)}
+    .md{background:color-mix(in srgb, var(--md) 18%, transparent); color:var(--md); border:1px solid color-mix(in srgb, var(--md) 40%, transparent)}
+    .lo{background:color-mix(in srgb, var(--lo) 18%, transparent); color:var(--lo); border:1px solid color-mix(in srgb, var(--lo) 40%, transparent)}
+    .section{margin:22px 0}
+    .section h2{font-size:16px; margin:0 0 10px}
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:12px; border:1px solid var(--line); background:var(--card)}
+    thead th{text-align:left; font-size:12px; color:var(--muted); font-weight:600; letter-spacing:.3px;
+      padding:10px 12px; border-bottom:1px solid var(--line); background:color-mix(in srgb, var(--card) 70%, transparent)}
+    tbody td{padding:12px; border-top:1px solid var(--line); vertical-align:top}
+    tbody tr:first-child td{border-top:0}
+    code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace; font-size:12px}
+    .pill{display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid var(--line); background:color-mix(in srgb, var(--card) 85%, transparent)}
+    .kv{display:grid; grid-template-columns:180px 1fr; gap:8px; padding:12px; border:1px dashed var(--line); border-radius:10px; background:color-mix(in srgb, var(--card) 92%, transparent)}
+    .kv .k{color:var(--muted)}
+    .footer{margin-top:28px; color:var(--muted); font-size:12px}
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+  
+  
+  
+  
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1 class="title">Security Scan</h1>
+        <div class="meta">
+          Alvo: <span class="mono">localhost</span>
+           • IP: <span class="mono">127.0.0.1</span>
+           • Data: <span class="mono">2025-09-23T03:59:20.962375Z</span>
+        </div>
+      </div>
+      <div>
+        <span class="badge hi">ALTO 1</span>
+        <span class="badge md">MÉDIO 1</span>
+        <span class="badge lo">BAIXO 0</span>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Resumo de Severidade</h3>
+        <div class="value">2</div>
+        <div class="meta">Total de achados</div>
+      </div>
+      <div class="card">
+        <h3>Portas detectadas</h3>
+        <div class="value">
+          2
+        </div>
+        <div class="meta">Abertas (TCP)</div>
+      </div>
+      <div class="card">
+        <h3>TLS</h3>
+        
+          <div class="value">—</div>
+          <div class="meta">Sem TLS detectado</div>
+        
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Metadados do Alvo</h2>
+      <div class="kv">
+        <div class="k">Domínio</div><div class="v mono">localhost</div>
+        <div class="k">IP</div><div class="v mono">127.0.0.1</div>
+
+        <div class="k">Portas Varridas</div>
+        <div class="v">
+          
+            
+            <span class="pill mono">80</span>
+          
+            
+            <span class="pill mono">8080 · aberto</span>
+          
+            
+            <span class="pill mono">8443 · aberto</span>
+          
+          
+        </div>
+
+        <div class="k">Redirect HTTP→HTTPS</div>
+        <div class="v">
+          —
+        </div>
+
+        <div class="k">Headers de Segurança</div>
+        <div class="v">
+          
+          
+          
+            <span class="pill mono">HSTS: ausente</span>
+          
+            <span class="pill mono">CSP: ausente</span>
+          
+            <span class="pill mono">X-Frame-Options: ausente</span>
+          
+            <span class="pill mono">X-Content-Type-Options: ausente</span>
+          
+            <span class="pill mono">Referrer-Policy: ausente</span>
+          
+            <span class="pill mono">Permissions-Policy: ausente</span>
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Achados</h2>
+      <table role="table" aria-label="Tabela de achados">
+        <thead>
+          <tr>
+            <th>Severidade</th>
+            <th>Título</th>
+            <th>Evidência</th>
+            <th>Recomendação</th>
+          </tr>
+        </thead>
+        <tbody>
+        
+          
+          
+          <tr>
+            <td><span class="badge hi">ALTO</span></td>
+            <td class="mono">HSTS ausente</td>
+            <td>Cabeçalho Strict-Transport-Security não encontrado</td>
+            <td>Adicionar HSTS: max-age=63072000; includeSubDomains; preload.</td>
+          </tr>
+        
+          
+          
+          <tr>
+            <td><span class="badge md">MÉDIO</span></td>
+            <td class="mono">CSP ausente</td>
+            <td>Cabeçalho Content-Security-Policy não encontrado</td>
+            <td>Definir CSP mínima (ex.: default-src 'self') e ampliar gradualmente.</td>
+          </tr>
+        
+        
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Detalhes TLS (se aplicável)</h2>
+      
+        <div class="meta">Sem informações de TLS.</div>
+      
+    </div>
+
+    <div class="footer">
+      <p>Gerado por Security Scanner (Python). Use somente com permissão explícita do proprietário do alvo.</p>
+    </div>
+  </div>
+</body>
+</html>

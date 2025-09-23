@@ -1,0 +1,188 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Security Scan – {{ data.target.input }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root{
+      --bg:#0b0d12; --card:#111520; --muted:#9aa3b2; --text:#e7ecf3;
+      --hi:#ff4d4f; --md:#faad14; --lo:#52c41a; --line:#1c2230; --accent:#4aa8ff;
+    }
+    @media (prefers-color-scheme: light) {
+      :root{
+        --bg:#f7f9fc; --card:#ffffff; --muted:#5a6677; --text:#1a2230;
+        --hi:#d32029; --md:#b56b00; --lo:#2e8b57; --line:#e6eaf2; --accent:#1677ff;
+      }
+    }
+    *{box-sizing:border-box}
+    body{ margin:0; padding:24px; background:var(--bg); color:var(--text);
+      font:14px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji"}
+    .container{max-width:1100px; margin:0 auto}
+    .header{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap;
+      margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--line)}
+    .title{margin:0; font-size:22px; letter-spacing:.2px}
+    .meta{color:var(--muted); font-size:13px}
+    .cards{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; margin:16px 0 20px}
+    .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; box-shadow:0 1px 0 rgba(0,0,0,.04)}
+    .card h3{margin:0 0 6px; font-size:13px; color:var(--muted); font-weight:600; letter-spacing:.3px}
+    .value{font-size:24px; font-weight:700}
+    .badge{display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; font-weight:600; font-size:12px}
+    .hi{background:color-mix(in srgb, var(--hi) 18%, transparent); color:var(--hi); border:1px solid color-mix(in srgb, var(--hi) 40%, transparent)}
+    .md{background:color-mix(in srgb, var(--md) 18%, transparent); color:var(--md); border:1px solid color-mix(in srgb, var(--md) 40%, transparent)}
+    .lo{background:color-mix(in srgb, var(--lo) 18%, transparent); color:var(--lo); border:1px solid color-mix(in srgb, var(--lo) 40%, transparent)}
+    .section{margin:22px 0}
+    .section h2{font-size:16px; margin:0 0 10px}
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:12px; border:1px solid var(--line); background:var(--card)}
+    thead th{text-align:left; font-size:12px; color:var(--muted); font-weight:600; letter-spacing:.3px;
+      padding:10px 12px; border-bottom:1px solid var(--line); background:color-mix(in srgb, var(--card) 70%, transparent)}
+    tbody td{padding:12px; border-top:1px solid var(--line); vertical-align:top}
+    tbody tr:first-child td{border-top:0}
+    code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace; font-size:12px}
+    .pill{display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid var(--line); background:color-mix(in srgb, var(--card) 85%, transparent)}
+    .kv{display:grid; grid-template-columns:180px 1fr; gap:8px; padding:12px; border:1px dashed var(--line); border-radius:10px; background:color-mix(in srgb, var(--card) 92%, transparent)}
+    .kv .k{color:var(--muted)}
+    .footer{margin-top:28px; color:var(--muted); font-size:12px}
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+  {% set totals = (data.summary.totals if data.summary and 'totals' in data.summary else {'high':0,'medium':0,'low':0}) %}
+  {% set h = totals.high or 0 %}
+  {% set m = totals.medium or 0 %}
+  {% set l = totals.low or 0 %}
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1 class="title">Security Scan</h1>
+        <div class="meta">
+          Alvo: <span class="mono">{{ data.target.input }}</span>
+          {% if data.target.resolved_ip %} • IP: <span class="mono">{{ data.target.resolved_ip }}</span>{% endif %}
+          {% if data.scan_meta and data.scan_meta.finished_at %} • Data: <span class="mono">{{ data.scan_meta.finished_at }}</span>{% endif %}
+        </div>
+      </div>
+      <div>
+        <span class="badge hi">ALTO {{ h }}</span>
+        <span class="badge md">MÉDIO {{ m }}</span>
+        <span class="badge lo">BAIXO {{ l }}</span>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Resumo de Severidade</h3>
+        <div class="value">{{ h + m + l }}</div>
+        <div class="meta">Total de achados</div>
+      </div>
+      <div class="card">
+        <h3>Portas detectadas</h3>
+        <div class="value">
+          {{ (data.target.network.open_ports | length) if data.target and data.target.network else 0 }}
+        </div>
+        <div class="meta">Abertas (TCP)</div>
+      </div>
+      <div class="card">
+        <h3>TLS</h3>
+        {% if data.results and data.results.tls and data.results.tls.certificate %}
+          <div class="value">{{ data.results.tls.version or "—" }}</div>
+          <div class="meta">Expira em {{ data.results.tls.certificate.not_after or "—" }}</div>
+        {% else %}
+          <div class="value">—</div>
+          <div class="meta">Sem TLS detectado</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Metadados do Alvo</h2>
+      <div class="kv">
+        <div class="k">Domínio</div><div class="v mono">{{ data.target.input }}</div>
+        <div class="k">IP</div><div class="v mono">{{ data.target.resolved_ip or "—" }}</div>
+
+        <div class="k">Portas Varridas</div>
+        <div class="v">
+          {% for p in (data.target.network.ports_scanned or []) %}
+            {% set is_open = p in (data.target.network.open_ports or []) %}
+            <span class="pill mono">{{ p }}{% if is_open %} · aberto{% endif %}</span>
+          {% endfor %}
+          {% if not data.target.network.ports_scanned %}—{% endif %}
+        </div>
+
+        <div class="k">Redirect HTTP→HTTPS</div>
+        <div class="v">
+          {% if data.results and data.results.http and data.results.http.http_to_https_redirect is not none %}
+            <span class="pill mono">{{ "Sim" if data.results.http.http_to_https_redirect else "Não" }}</span>
+          {% else %}—{% endif %}
+        </div>
+
+        <div class="k">Headers de Segurança</div>
+        <div class="v">
+          {% set H = data.results.http.headers if data.results and data.results.http and data.results.http.headers else {} %}
+          {% set names = {
+            "strict_transport_security":"HSTS",
+            "content_security_policy":"CSP",
+            "x_frame_options":"X-Frame-Options",
+            "x_content_type_options":"X-Content-Type-Options",
+            "referrer_policy":"Referrer-Policy",
+            "permissions_policy":"Permissions-Policy"
+          } %}
+          {% for k,v in names.items() %}
+            <span class="pill mono">{{ v }}: {{ "OK" if k in H else "ausente" }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Achados</h2>
+      <table role="table" aria-label="Tabela de achados">
+        <thead>
+          <tr>
+            <th>Severidade</th>
+            <th>Título</th>
+            <th>Evidência</th>
+            <th>Recomendação</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for f in data.findings %}
+          {% set sev = (f.severity or "") | lower %}
+          {% set sevn = "hi" if "high" in sev or "alto" in sev else ("md" if "medium" in sev or "medio" in sev or "médio" in sev else "lo") %}
+          <tr>
+            <td><span class="badge {{ sevn }}">{{ "ALTO" if sevn=="hi" else ("MÉDIO" if sevn=="md" else "BAIXO") }}</span></td>
+            <td class="mono">{{ f.title }}</td>
+            <td>{{ f.evidence or "—" }}</td>
+            <td>{{ f.recommendation or "—" }}</td>
+          </tr>
+        {% endfor %}
+        {% if not data.findings or (data.findings | length == 0) %}
+          <tr><td colspan="4" class="meta" style="text-align:center;padding:20px">Nenhum achado reportado.</td></tr>
+        {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Detalhes TLS (se aplicável)</h2>
+      {% if data.results and data.results.tls and data.results.tls.certificate %}
+        <div class="kv">
+          <div class="k">Versão TLS</div><div class="v mono">{{ data.results.tls.version or "—" }}</div>
+          <div class="k">Emissor</div><div class="v mono">{{ data.results.tls.certificate.issuer or "—" }}</div>
+          <div class="k">Subject</div><div class="v mono">{{ data.results.tls.certificate.subject or "—" }}</div>
+          <div class="k">Válido de</div><div class="v mono">{{ data.results.tls.certificate.not_before or "—" }}</div>
+          <div class="k">Válido até</div><div class="v mono">{{ data.results.tls.certificate.not_after or "—" }}</div>
+          <div class="k">Dias p/ expirar</div><div class="v mono">{{ data.results.tls.certificate.days_to_expire if data.results.tls.certificate.days_to_expire is not none else "—" }}</div>
+        </div>
+      {% else %}
+        <div class="meta">Sem informações de TLS.</div>
+      {% endif %}
+    </div>
+
+    <div class="footer">
+      <p>Gerado por Security Scanner (Python). Use somente com permissão explícita do proprietário do alvo.</p>
+    </div>
+  </div>
+</body>
+</html>
+

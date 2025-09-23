@@ -1,0 +1,45 @@
+user  nginx;
+worker_processes  auto;
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+events { worker_connections 1024; }
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+
+    server {
+        listen 80;
+        server_name localhost;
+
+        # Redirect rule intentionally OFF -> to test NO HTTP→HTTPS redirect
+        # return 301 https://$host$request_uri;
+
+        location / {
+            return 200 'Nginx HTTP test - no redirect to HTTPS\n';
+            add_header Content-Type text/plain;
+            # Note: no HSTS header here (good for scanner to detect)
+        }
+    }
+
+    server {
+        listen 443 ssl;
+        server_name localhost;
+
+        ssl_certificate /etc/nginx/certs/server.crt;
+        ssl_certificate_key /etc/nginx/certs/server.key;
+
+        # Basic security headers - intentionally leave out Strict-Transport-Security to test detection
+        add_header X-Frame-Options "DENY" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer" always;
+        # Note: Content-Security-Policy intentionally omitted
+
+        location / {
+            return 200 'Nginx HTTPS test - TLS active, no HSTS/CSP\n';
+            add_header Content-Type text/plain;
+        }
+    }
+}

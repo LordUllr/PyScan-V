@@ -1,0 +1,119 @@
+{
+  "scan_meta": {
+    "schema_version": "1.0.0",
+    "scanner_name": "PyScan",
+    "scanner_version": "0.1.0",
+    "started_at": "2025-09-23T03:52:06.996807Z",
+    "finished_at": "2025-09-23T03:52:16.226898Z",
+    "duration_ms": 9230,
+    "host_env": {
+      "os": "Windows-11-10.0.26100-SP0",
+      "python": "3.13.7",
+      "hostname": "DESKTOP-AIROLC6",
+      "ip": "192.168.1.100"
+    }
+  },
+  "target": {
+    "input": "localhost",
+    "resolved_ip": "127.0.0.1",
+    "scope_note": "Somente dominio raiz",
+    "network": {
+      "ports_scanned": [
+        80,
+        443,
+        8080
+      ],
+      "open_ports": [
+        8080
+      ]
+    }
+  },
+  "scan_params": {
+    "ports_spec": "80,443,8080",
+    "tcp_timeout_s": 1.0,
+    "workers": 100,
+    "http_timeout_s": 7.0,
+    "user_agent": "PyScan/0.1.0",
+    "dns_resolver": "system",
+    "follow_redirects": false
+  },
+  "results": {
+    "tls": null,
+    "http": {
+      "http_to_https_redirect": null,
+      "headers": {},
+      "cookies": [],
+      "affected": [
+        "http://localhost/"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "HSTS_MISSING",
+      "category": "HTTP",
+      "title": "HSTS ausente",
+      "severity": "high",
+      "score": 7.5,
+      "standards": {
+        "owasp": [
+          "Secure Headers"
+        ],
+        "cwe": []
+      },
+      "evidence": "Cabeçalho Strict-Transport-Security não encontrado",
+      "recommendation": "Adicionar HSTS: max-age=63072000; includeSubDomains; preload.",
+      "references": [
+        "https://owasp.org/www-project-secure-headers/"
+      ],
+      "affected": [],
+      "false_positive": false
+    },
+    {
+      "id": "CSP_MISSING",
+      "category": "HTTP",
+      "title": "CSP ausente",
+      "severity": "medium",
+      "score": 6.0,
+      "standards": {
+        "owasp": [
+          "A03-Injection (XSS) – mitigação por CSP"
+        ],
+        "cwe": [
+          "CWE-79"
+        ]
+      },
+      "evidence": "Cabeçalho Content-Security-Policy não encontrado",
+      "recommendation": "Definir CSP mínima (ex.: default-src 'self') e ampliar gradualmente.",
+      "references": [
+        "https://developer.mozilla.org/docs/Web/HTTP/CSP"
+      ],
+      "affected": [],
+      "false_positive": false
+    }
+  ],
+  "summary": {
+    "totals": {
+      "high": 1,
+      "medium": 1,
+      "low": 0
+    },
+    "by_category": {
+      "HTTP": 2
+    }
+  },
+  "errors": [],
+  "warnings": [],
+  "compliance": {
+    "https_enforced": false,
+    "hsts_present": false,
+    "csp_present": false,
+    "min_tls_version": null,
+    "meets_baseline": false
+  },
+  "signing": {
+    "sha256": "b3d59256e3d3a39e77979dd019d4e141d9ef0ba3f6c1ec02f9662ffb997403e2",
+    "signed_at": "2025-09-23T03:52:16.226898Z",
+    "signature": null
+  }
+}
