@@ -14,6 +14,7 @@ FID = {
     "TLS_MIN_VERSION": "TLS_MIN_VERSION",  # < TLS 1.2
 }
 
+# Normaliza severidade / Normalize severity
 def _sev(s):  # garante mapeamento PT/EN -> en
     s = (s or "").strip().lower()
     mapping = {
@@ -23,6 +24,7 @@ def _sev(s):  # garante mapeamento PT/EN -> en
     }
     return mapping.get(s, s if s in ("high","medium","low") else "low")
 
+# Avalia dados coletados e gera achados / Assess collected data and generate findings
 def assess_findings(scan_data: dict) -> list[dict]:
     findings: list[dict] = []
     http = (scan_data.get("http") or {})
@@ -114,7 +116,7 @@ def assess_findings(scan_data: dict) -> list[dict]:
                 "false_positive": False,
             })
 
-    # Normaliza severidade
+    # Normaliza severidade / Normalize severity
     for f in findings:
         f["severity"] = _sev(f.get("severity", "low"))
 

@@ -4,6 +4,7 @@ import argparse
 import json
 from datetime import datetime, timezone
 
+# Modulos internos / Internal modules
 from scanner.ports import scan_tcp
 from scanner.tls import inspect_tls
 from scanner.httpsec import analyze_http
@@ -11,6 +12,7 @@ from scanner.severity import assess_findings
 from scanner.report import to_json, to_html
 from scanner.utils import now_utc_iso_z, resolve_host, file_sha256, host_env
 
+# Função para analisar a especificação de portas / Function to parse port specification
 def parse_ports(spec: str):
     ports = set()
     for part in spec.split(","):
@@ -24,6 +26,7 @@ def parse_ports(spec: str):
             ports.add(int(part))
     return sorted(ports)
 
+# Função principal / Main function
 def main():
     ap = argparse.ArgumentParser(description="Security Scanner (MVP+JSON Pro)")
     ap.add_argument("--target", required=True, help="domain or IP")
@@ -36,12 +39,13 @@ def main():
     ap.add_argument("--follow-redirects", action="store_true", default=False)
     args = ap.parse_args()
 
-    t0 = datetime.now(timezone.utc)
+    t0 = datetime.now(timezone.utc) # início da varredura / scan start
 
-    # --- parâmetros e metadados
+    # --- Parâmetros e metadados / Parameters and metadata
     ports = parse_ports(args.ports)
     resolved = resolve_host(args.target)
 
+    #--- Parâmetros de varredura / Scan parameters
     scan_params = {
         "ports_spec": args.ports,
         "tcp_timeout_s": args.tcp_timeout,
@@ -52,12 +56,12 @@ def main():
         "follow_redirects": bool(args.follow_redirects),
     }
 
-    # --- coleta
+    # --- Coleta de dados / Data collection
     errors, warnings = [], []
 
     port_results = scan_tcp(args.target, ports, timeout=args.tcp_timeout, workers=args.workers)
     tls_result = None
-    if any(p.get("open") and p.get("port") == 443 for p in port_results):
+    if any(p.get("open") and p.get("port") == 443 for p in port_results): # apenas se 443 estiver aberta
         try:
             tls_result = inspect_tls(args.target, 443)
         except Exception as e:
@@ -66,7 +70,6 @@ def main():
 
     try:
         http_result = analyze_http(args.target)
-        # para o campo "affected" em findings, podemos registrar a URL clara
         if isinstance(http_result, dict) and "http_to_https_redirect" in http_result:
             http_result.setdefault("affected", [f"http://{args.target}/"])
     except Exception as e:
@@ -81,10 +84,10 @@ def main():
         "http": http_result or {},
     }
 
-    # --- findings normalizados
+    # --- Findings normalizados / Normalized findings
     findings = assess_findings(data)
 
-    # --- resumo e por categoria
+    # --- Resumo e por categoria / Summary and by category
     summary = {"high": 0, "medium": 0, "low": 0}
     by_category = {}
     for f in findings:
@@ -146,20 +149,19 @@ def main():
         }
     }
 
-    # escreve JSON
+    # Escreve JSON / Write JSON
     to_json(report, args.out)
 
-    # preenche o hash SHA-256 do arquivo gerado
+    # Preenche o hash SHA-256 do arquivo gerado / Fill in the SHA-256 hash of the generated file
     try:
         from scanner.utils import file_sha256
         sha = file_sha256(args.out)
         report["signing"]["sha256"] = sha
-        # regrava com hash preenchido
         to_json(report, args.out)
     except Exception:
         pass
 
-    # HTML (usa o mesmo dicionário "report")
+    # HTML (usa o mesmo dicionário "report") / HTML (uses the same "report" dictionary)
     if args.html:
         to_html(report, args.html)
 
