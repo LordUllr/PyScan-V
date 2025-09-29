@@ -13,7 +13,7 @@ from scanner.report import to_json, to_html
 from scanner.utils import now_utc_iso_z, resolve_host, file_sha256, host_env
 from scanner.fingerprint import fingerprint_ports
 
-# Função para analisar a especificação de portas / Function to parse port specification
+# Funcao para analisar a especificacao de portas / Function to parse port specification
 def parse_ports(spec: str):
     ports = set()
     for part in spec.split(","):
@@ -27,7 +27,7 @@ def parse_ports(spec: str):
             ports.add(int(part))
     return sorted(ports)
 
-# Função principal / Main function
+# Funcao principal / Main function
 def main():
     ap = argparse.ArgumentParser(description="Security Scanner (MVP+JSON Pro)")
     ap.add_argument("--target", required=True, help="domain or IP")
@@ -40,13 +40,13 @@ def main():
     ap.add_argument("--follow-redirects", action="store_true", default=False)
     args = ap.parse_args()
 
-    t0 = datetime.now(timezone.utc) # início da varredura / scan start
+    t0 = datetime.now(timezone.utc) # inï¿½cio da varredura / scan start
 
-    # --- Parâmetros e metadados / Parameters and metadata
+    # --- Parametros e metadados / Parameters and metadata
     ports = parse_ports(args.ports)
     resolved = resolve_host(args.target)
 
-    #--- Parâmetros de varredura / Scan parameters
+    #--- Parametros de varredura / Scan parameters
     scan_params = {
         "ports_spec": args.ports,
         "tcp_timeout_s": args.tcp_timeout,
@@ -87,7 +87,7 @@ def main():
 
     fingerprints = fingerprint_ports(args.target, open_ports, timeout=1.0, workers=min(50, args.workers))
 
-    # --- estrutura intermediária compatível com severity.assess_findings
+    # --- estrutura intermediaria compativel com severity.assess_findings
     data = {
         "target": args.target,
         "ports": port_results,
@@ -174,7 +174,7 @@ def main():
     except Exception:
         pass
 
-    # HTML (usa o mesmo dicionário "report") / HTML (uses the same "report" dictionary)
+    # HTML (usa o mesmo dicionario "report") / HTML (uses the same "report" dictionary)
     if args.html:
         to_html(report, args.html)
 
